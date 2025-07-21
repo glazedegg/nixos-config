@@ -22,6 +22,7 @@
 
         modules = [
           ./users/tigerwarrior345/home.nix
+          ./users/tigerwarrior345/nvim.nix
 
           # Inline module to set username, homedir 
 	  {
