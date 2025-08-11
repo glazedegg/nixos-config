@@ -32,7 +32,11 @@
 	git-crypt
 	gnupg
 	pinentry-qt
-	
+	wl-clipboard
+	wayland-utils
+	kdePackages.sddm-kcm
+	kdePackages.kcalc
+	kdePackages.partitionmanager
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
