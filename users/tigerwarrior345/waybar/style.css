@@ -1,31 +1,53 @@
 * {
     font-family: "JetBrainsMono Nerd Font", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 window#waybar {
-    background-color: rgba(30, 30, 30, 0.95);
-    color: #ffffff;
-    border-top: 2px solid #3daee9; /* KDE Blue */
+    background-color: rgba(30, 30, 46, 0.7); /* Dark semi-transparent */
+    color: #cdd6f4;
+    border-radius: 20px; /* The "Pill" shape */
+    transition-property: background-color;
+    transition-duration: .5s;
 }
 
-#custom-launcher {
-    font-size: 18px;
-    color: #3daee9;
-    padding-left: 10px;
-    padding-right: 15px;
-    margin-right: 10px;
-}
-
+/* --- WORKSPACES (The Dots) --- */
 #workspaces button {
     padding: 0 5px;
+    color: #7f849c; /* Grey for inactive */
     background-color: transparent;
-    color: #ffffff;
+    /* Remove default borders */
+    box-shadow: none;
+    text-shadow: none;
+    border: none;
+    border-radius: 0;
 }
 
 #workspaces button.active {
-    background-color: #4c566a;
-    border-bottom: 3px solid #3daee9;
+    color: #89b4fa; /* Blue for active */
+}
+
+#workspaces button:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: #cdd6f4;
+}
+
+/* --- MODULES (Right Side) --- */
+#custom-launcher {
+    color: #89b4fa;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+#custom-power {
+    background-color: #89b4fa; 
+    color: #1e1e2e;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-right: 10px;
+    border-radius: 10px;
 }
 
 #clock,
@@ -35,10 +57,18 @@ window#waybar {
 #pulseaudio,
 #tray {
     padding: 0 10px;
-    margin: 0 4px;
-    color: #ffffff;
+    background-color: rgba(49, 50, 68, 0.6); /* Slightly lighter background for modules */
+    margin: 5px 3px; /* Gaps between modules */
+    border-radius: 10px;
 }
 
-#pulseaudio { color: #a3be8c; }
-#network { color: #b48ead; }
-#clock { font-weight: bold; }
+#clock {
+    background-color: transparent;
+    font-size: 16px;
+}
+
+/* --- COLORS --- */
+#pulseaudio { color: #a6e3a1; } /* Green */
+#network { color: #f9e2af; }    /* Yellow */
+#cpu { color: #fab387; }        /* Orange */
+#memory { color: #cba6f7; }     /* Purple */

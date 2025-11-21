@@ -1,0 +1,171 @@
+configuration {
+    /* 1. ENABLE MODES: Apps, Run Command, File Browser, Window Switcher */
+    modi:                       "drun,run,filebrowser,window";
+    
+    show-icons:                 true;
+    display-drun:               " Apps";
+    display-run:                " Run";
+    display-filebrowser:        " Files";
+    display-window:             " Windows";
+    drun-display-format:        "{name}";
+    window-format:              "{w} · {c} · {t}";
+}
+
+/* --- GLOBAL SETTINGS --- */
+* {
+    font:                        "JetBrainsMono Nerd Font Bold 12";
+    background:                  #1e1e2ecc; 
+    background-alt:              #31324499; 
+    foreground:                  #cdd6f4;
+    selected:                    #89b4fa;
+    active:                      #a6e3a1;
+    urgent:                      #f38ba8;
+}
+
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       700px; /* Slightly wider for tabs */
+    
+    border:                      2px solid;
+    border-color:                @selected;
+    border-radius:               20px;
+    
+    background-color:            @background;
+    cursor:                      "default";
+}
+
+/* --- CONTAINER (Holds everything) --- */
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    margin:                      0px;
+    padding:                     0px;
+    border:                      0px solid;
+    border-radius:               0px 0px 0px 0px;
+    border-color:                @selected;
+    background-color:            transparent;
+    /* 2. LAYOUT: Search Bar -> List -> Tabs at bottom */
+    children:                    [ "inputbar", "listview", "mode-switcher" ];
+}
+
+/* --- INPUT BAR --- */
+inputbar {
+    enabled:                     true;
+    spacing:                     10px;
+    margin:                      0px;
+    padding:                     15px;
+    border:                      0px;
+    border-radius:               20px 20px 0px 0px;
+    background-color:            transparent;
+    text-color:                  @foreground;
+    children:                    [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:                     true;
+    background-color:            @selected;
+    text-color:                  #1e1e2e;
+    padding:                     10px 15px;
+    border-radius:               12px;
+}
+
+entry {
+    enabled:                     true;
+    background-color:            transparent;
+    text-color:                  inherit;
+    cursor:                      text;
+    placeholder:                 "Search...";
+    placeholder-color:           inherit;
+    padding:                     10px;
+}
+
+/* --- LIST VIEW --- */
+listview {
+    enabled:                     true;
+    columns:                     1;
+    lines:                       6;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    
+    spacing:                     10px;
+    margin:                      0px;
+    padding:                     20px;
+    border:                      0px;
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+
+/* --- ELEMENTS --- */
+element {
+    enabled:                     true;
+    spacing:                     15px;
+    margin:                      0px;
+    padding:                     15px;
+    border:                      0px;
+    border-radius:               12px;
+    background-color:            transparent;
+    text-color:                  @foreground;
+    cursor:                      pointer;
+}
+
+element normal.normal {
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+
+element alternate.normal {
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+
+element selected.normal {
+    background-color:            @background-alt;
+    text-color:                  @selected;
+    border:                      1px solid;
+    border-color:                @selected;
+}
+
+element-icon {
+    background-color:            transparent;
+    text-color:                  inherit;
+    size:                        32px;
+    cursor:                      inherit;
+}
+
+element-text {
+    background-color:            transparent;
+    text-color:                  inherit;
+    cursor:                      inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+}
+
+/* --- MODE SWITCHER (The Tabs) --- */
+mode-switcher {
+    enabled:                     true;
+    spacing:                     10px;
+    margin:                      0px;
+    padding:                     10px 20px 20px 20px; /* Padding bottom */
+    border:                      0px solid;
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+
+button {
+    padding:                     10px;
+    border-radius:               12px;
+    background-color:            @background-alt;
+    text-color:                  inherit;
+    cursor:                      pointer;
+}
+
+button selected {
+    background-color:            @selected;
+    text-color:                  #1e1e2e;
+}

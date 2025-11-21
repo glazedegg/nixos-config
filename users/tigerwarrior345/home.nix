@@ -36,8 +36,12 @@
 
   xdg.configFile."hypr/hyprpaper.conf".source = ./hypr/hyprpaper.conf;
 
+  # Waybar
   xdg.configFile."waybar/config".source = ./waybar/config.jsonc;
   xdg.configFile."waybar/style.css".source = ./waybar/style.css;
+
+  # Rofi
+  xdg.configFile."rofi/config.rasi".source = ./rofi/config.rasi;
 
   # If you have a separate waybar config in this folder, uncomment this:
   # xdg.configFile."waybar/config".source = ./waybar-config;
@@ -83,6 +87,7 @@ home.packages = with pkgs; [
     libnotify               # Required for notifications to work
     hyprpaper               # Wallpaper handling
     networkmanagerapplet    # Wifi GUI in the bar
+    wlogout
 
     # --- ESSENTIAL UTILITIES ---
     ghostty                 # Terminal
