@@ -1,6 +1,20 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
+# =============================================================================
+#  NixOS SYSTEM CONFIGURATION (The "Landlord")
+# =============================================================================
+#
+#  WHO IS THIS FILE FOR?
+#  This file controls the "Physical House." It manages hardware, drivers, 
+#  booting, root users, and system-wide services (like Audio/Wifi).
+#
+#  WHEN TO EDIT THIS?
+#  - You need to fix Audio, Wifi, or Graphics drivers.
+#  - You want to add a new user account.
+#  - You want to install "Infrastructure" software (Docker, VPNs, Steam).
+#
+#  HOW TO APPLY CHANGES?
+#  Since this modifies the OS, you need admin rights:
+#  $ sudo nixos-rebuild switch --flake .
+# =============================================================================
 
 { config, pkgs, inputs, ... }:
 
@@ -10,29 +24,36 @@
       ./hardware-configuration.nix
     ];
 
-  # Bootloader.
+  # ---------------------------------------------------------------------------
+  # BOOTLOADER & KERNEL
+  # Critical for starting the computer.
+  # ---------------------------------------------------------------------------
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  # Use latest kernel.
+  
+  # Use the latest Linux kernel (good for newer hardware/gaming)
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  # ---------------------------------------------------------------------------
+  # NETWORKING
+  # ---------------------------------------------------------------------------
+  networking.hostName = "nixos"; 
+  # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant
+  
+  # Enable NetworkManager (easiest way to manage Wifi/Ethernet)
+  # Use 'nmtui' in the terminal to connect to Wifi.
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+  # ---------------------------------------------------------------------------
+  # TIME & LOCALE
+  # Controls your clock and how dates/currency appear.
+  # ---------------------------------------------------------------------------
   time.timeZone = "Europe/Stockholm";
-
-  # Select internationalisation properties.
+  
+  # System default language
   i18n.defaultLocale = "en_US.UTF-8";
 
+  # Regional settings (Swedish formats for dates/numbers)
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "sv_SE.UTF-8";
     LC_IDENTIFICATION = "sv_SE.UTF-8";
@@ -45,107 +66,99 @@
     LC_TIME = "sv_SE.UTF-8";
   };
 
-  services = {
-    displayManager = {
-      sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
-    defaultSession = "hyprland";
-  };
-
-  desktopManager.plasma6.enable = true;  
-};
-
-  # Configure keymap in X11
+  # ---------------------------------------------------------------------------
+  # KEYMAP (KEYBOARD LAYOUT)
+  # ---------------------------------------------------------------------------
+  # For the graphical environment (X11/Wayland)
   services.xserver.xkb = {
     layout = "se";
     variant = "";
   };
-
-  # Configure console keymap
+  
+  # For the TTY (black screen terminal before login)
   console.keyMap = "sv-latin1";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # ---------------------------------------------------------------------------
+  # DESKTOP ENVIRONMENT & LOGIN SCREEN
+  # ---------------------------------------------------------------------------
+  # SDDM is the "Login Screen" manager.
+  services.displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+  };
+  
+  # PLASMA 6 (KDE): A backup desktop environment.
+  # Useful if you break your Hyprland config and need a GUI to fix it.
+  services.desktopManager.plasma6.enable = true;
+  
+  # Set Hyprland as the default option selected at login
+  services.displayManager.defaultSession = "hyprland";
 
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
+  # ---------------------------------------------------------------------------
+  # HYPRLAND (THE ENGINE)
+  # ---------------------------------------------------------------------------
+  # This installs the Hyprland binary and sets up the Wayland session files.
+  # NOTE: Your personal Hyprland config (animations, keybinds) lives in HOME MANAGER,
+  # not here. This just allows the OS to run it.
+  programs.hyprland.enable = true;
+
+  # ---------------------------------------------------------------------------
+  # AUDIO (PIPEWIRE)
+  # ---------------------------------------------------------------------------
+  # Pipewire is the modern audio standard for Linux. 
+  services.pulseaudio.enable = false; # Disable old PulseAudio
+  security.rtkit.enable = true;       # Security for real-time audio
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  # ---------------------------------------------------------------------------
+  # PRINTERS
+  # ---------------------------------------------------------------------------
+  services.printing.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # ---------------------------------------------------------------------------
+  # USER ACCOUNTS
+  # ---------------------------------------------------------------------------
   users.users.tigerwarrior345 = {
     isNormalUser = true;
     description = "tigerwarrior345";
+    # 'wheel' enables sudo privileges, 'networkmanager' allows changing wifi
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  thunderbird
+      # You can add packages here, but it's better to use Home Manager
+      # for user-specific apps (like browsers, discord, etc.)
     ];
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  programs.hyprland = {
-    enable = true;
-    # set the flake package
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    # make sure to also set the portal package, so that they are in sync
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-  };
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # ---------------------------------------------------------------------------
+  # SYSTEM-WIDE PACKAGES
+  # ---------------------------------------------------------------------------
+  # Apps installed here are available to ALL users.
+  # Best for CLI tools (git, vim, wget) that you need for system maintenance.
   environment.systemPackages = with pkgs; [
-  	gimp
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    gimp
+    git 
+    vim 
+    wget
   ];
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  # Firefox is a "Program" module, often better configured this way than in packages
+  programs.firefox.enable = true;
+  
+  # Allow proprietary software (Spotify, Steam, Nvidia drivers, etc.)
+  nixpkgs.config.allowUnfree = true;
+  
+  # Enable Flakes (The modern Nix command system)
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
-
+  # ---------------------------------------------------------------------------
+  # SYSTEM STATE VERSION
+  # ---------------------------------------------------------------------------
+  # DO NOT CHANGE THIS unless you reinstall NixOS from scratch.
+  # It does not limit your updates; it ensures database compatibility.
+  system.stateVersion = "25.05";
 }

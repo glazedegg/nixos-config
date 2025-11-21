@@ -1,117 +1,121 @@
+# =============================================================================
+#  HOME MANAGER CONFIGURATION (The "Tenant")
+# =============================================================================
+#
+#  WHO IS THIS FILE FOR?
+#  This file configures YOU (the user). It controls your applications, 
+#  dotfiles, themes, and shell aliases.
+#
+#  WHEN TO EDIT THIS?
+#  - You want to install user apps (Discord, Spotify, VS Code).
+#  - You want to change your specific Hyprland settings (keybinds, colors).
+#  - You want to add shell aliases.
+#
+#  HOW TO APPLY CHANGES?
+#  $ home-manager switch --flake .
+# =============================================================================
+
 { config, pkgs, ... }:
 
 {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
+  # ---------------------------------------------------------------------------
+  # USER INFORMATION
+  # ---------------------------------------------------------------------------
   home.username = "tigerwarrior345";
   home.homeDirectory = "/home/tigerwarrior345";
-  home.file.".config/hypr" = {
-    source = config.lib.file.mkOutOfStoreSymlink
-    "/home/tigerwarrior345/.dotfiles/users/tigerwarrior345/hypr";
-    force = true;
+
+  # ---------------------------------------------------------------------------
+  # HYPRLAND CONFIGURATION (The Connection)
+  # ---------------------------------------------------------------------------
+  # Instead of using absolute paths (which break if you move the folder),
+  # we use the Nix standard "xdg.configFile".
+  # This tells Home Manager: "Take the file 'hyprland.conf' from this folder,
+  # and link it to ~/.config/hypr/hyprland.conf"
+  
+  xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
+
+  # If you have a separate waybar config in this folder, uncomment this:
+  # xdg.configFile."waybar/config".source = ./waybar-config;
+  # xdg.configFile."waybar/style.css".source = ./waybar-style.css;
+
+  # ---------------------------------------------------------------------------
+  # SHELL ALIASES (Shortcuts)
+  # ---------------------------------------------------------------------------
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      # "Update System" - Requires password
+      sysup = "cd ~/.dotfiles && sudo nixos-rebuild switch --flake .";
+
+      # "Update User/Home" - No password
+      homeup = "cd ~/.dotfiles && home-manager switch --flake .";
+      
+      # Quick edit shortcuts
+      conf = "nvim ~/.dotfiles/system/configuration.nix";
+      home = "nvim ~/.dotfiles/users/tigerwarrior345/home.nix";
+    };
   };
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "25.05"; # Please read the comment before changing.
-
-  programs.gpg = {
-	enable = true;
-  };
-
-  programs.bash.shellAliases = {
-	# "Update System" - Requries password
-	sysup = "cd ~/.dotfiles && sudo nixos-rebuild switch --flake";
-
-	# "Update User/Home" - No password
-	homeup = "cd ~/.dotfiles && home-manager switch --flake .";
-  };
-
+  # ---------------------------------------------------------------------------
+  # GPG & SECURITY
+  # ---------------------------------------------------------------------------
+  programs.gpg.enable = true;
+  
   services.gpg-agent = {
-	enable = true;
-	pinentry.package = pkgs.pinentry-qt;
+    enable = true;
+    pinentry.package = pkgs.pinentry-qt;
   };
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
+
+  # ---------------------------------------------------------------------------
+  # PACKAGES (The "Furniture")
+  # ---------------------------------------------------------------------------
   home.packages = with pkgs; [
-  	ghostty
-	fastfetch
-	git
-	git-crypt
-	gnupg
-	pinentry-qt
-	wl-clipboard
-	wayland-utils
-	kdePackages.sddm-kcm
-	kdePackages.kcalc
-	kdePackages.partitionmanager
-	
-	# Hyprland specific
-	waybar
-	mako
-	networkmanagerapplet
-	hyprpaper
-	blueman
-	xdg-desktop-portal-hyprland
-	rofi-unwrapped
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
+    # --- TERMINAL & TOOLS ---
+    ghostty
+    fastfetch
+    git
+    git-crypt
+    gnupg
+    pinentry-qt
+    ripgrep    # Much faster version of grep
+    btop       # Cool looking task manager
 
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
+    # --- HYPRLAND ECOSYSTEM ---
+    waybar                  # Status bar
+    mako                    # Notification daemon
+    libnotify               # Required for mako to work
+    networkmanagerapplet    # Wifi GUI in tray
+    hyprpaper               # Wallpaper daemon
+    blueman                 # Bluetooth GUI
+    rofi	            # App launcher (Wayland version)
+    wl-clipboard            # Copy/Paste support
+    
+    # --- KDE / GUI APPS ---
+    kdePackages.sddm-kcm        # Settings for Login screen
+    kdePackages.kcalc           # Calculator
+    kdePackages.partitionmanager # Disk Manager
+    kdePackages.dolphin         # File Manager (Optional, good to have)
+    
+    # --- FONTS (Optional) ---
+    # If icons in Waybar look weird, you usually need a Nerd Font
+    nerd-fonts.jetbrains-mono
   ];
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
-
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/tigerwarrior345/etc/profile.d/hm-session-vars.sh
-  #
+  # ---------------------------------------------------------------------------
+  # ENVIRONMENT VARIABLES
+  # ---------------------------------------------------------------------------
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
+    # Tell Electron apps to use Wayland
+    NIXOS_OZONE_WL = "1"; 
   };
 
+  # ---------------------------------------------------------------------------
+  # HOME MANAGER SETUP
+  # ---------------------------------------------------------------------------
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  # DO NOT CHANGE THIS. It matches the version of Home Manager you first installed.
+  home.stateVersion = "25.05"; 
 }
