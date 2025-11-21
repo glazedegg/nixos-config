@@ -5,6 +5,11 @@
   # manage.
   home.username = "tigerwarrior345";
   home.homeDirectory = "/home/tigerwarrior345";
+  home.file.".config/hypr" = {
+    source = config.lib.file.mkOutOfStoreSymlink
+    "/home/tigerwarrior345/.dotfiles/users/tigerwarrior345/hypr";
+    force = true;
+  };
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -19,6 +24,14 @@
 	enable = true;
   };
 
+  programs.bash.shellAliases = {
+	# "Update System" - Requries password
+	sysup = "cd ~/.dotfiles && sudo nixos-rebuild switch --flake";
+
+	# "Update User/Home" - No password
+	homeup = "cd ~/.dotfiles && home-manager switch --flake .";
+  };
+
   services.gpg-agent = {
 	enable = true;
 	pinentry.package = pkgs.pinentry-qt;
@@ -26,7 +39,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-	ghostty
 	fastfetch
 	git
 	git-crypt
@@ -37,6 +49,15 @@
 	kdePackages.sddm-kcm
 	kdePackages.kcalc
 	kdePackages.partitionmanager
+	
+	# Hyprland specific
+	waybar
+	mako
+	networkmanagerapplet
+	hyprpaper
+	blueman
+	xdg-desktop-portal-hyprland
+	rofi-wayland-unwrapped
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
