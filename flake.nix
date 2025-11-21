@@ -19,57 +19,52 @@
   description = "System Config";
 
   inputs = {
-    # NixOS Official Package Store (Unstable branch)
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-
-    # Home Manager (Manages user dotfiles)
     home-manager.url = "github:nix-community/home-manager";
-    # Tell Home Manager to use the exact same system packages as NixOS
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, ... }:
   let
-    # The architecture of your machine
     system = "x86_64-linux";
-
     pkgs = import nixpkgs {
       inherit system;
       config = { allowUnfree = true; };
     };
-
   in {
     # -------------------------------------------------------------------------
-    # USER CONFIGURATIONS (Home Manager)
+    # USER CONFIGURATIONS
     # -------------------------------------------------------------------------
     homeConfigurations = {
-      tigerwarrior345 = home-manager.lib.homeManagerConfiguration {
+      # Name this "username@hostname".
+      # When you run 'homeup' on your laptop, it looks for exactly this string.
+      "tigerwarrior345@laptop" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-
-        # Where your user config files live
         modules = [
           ./users/tigerwarrior345/home.nix
-          # If you want nvim.nix separate, keep it here. 
-          # (Otherwise, it's cleaner to import it inside home.nix!)
           ./users/tigerwarrior345/nvim.nix 
         ];
       };
+      
+      # If you get a desktop later, you just add:
+      # "tigerwarrior345@desktop" = ...
     };
 
     # -------------------------------------------------------------------------
-    # SYSTEM CONFIGURATIONS (NixOS)
+    # SYSTEM CONFIGURATIONS
     # -------------------------------------------------------------------------
     nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
+      # Name this "laptop".
+      # When you run 'sysup', it checks your hostname ('laptop') and picks this.
+      laptop = nixpkgs.lib.nixosSystem {
         inherit system;
-
-        # Pass inputs to modules so we can use them there if needed
         specialArgs = { inherit inputs; };
-
         modules = [
-          ./system/configuration.nix
+          ./hosts/laptop/configuration.nix
         ];
       };
+      # If you get a desktop later, you just add:
+      # desktop = ...
     };
   };
 }

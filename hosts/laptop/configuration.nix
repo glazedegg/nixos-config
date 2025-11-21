@@ -22,6 +22,8 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../modules/system/hyprland.nix
+      ../../modules/system/sound.nix
     ];
 
   # ---------------------------------------------------------------------------
@@ -37,7 +39,7 @@
   # ---------------------------------------------------------------------------
   # NETWORKING
   # ---------------------------------------------------------------------------
-  networking.hostName = "nixos"; 
+  networking.hostName = "laptop"; 
   # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant
   
   # Enable NetworkManager (easiest way to manage Wifi/Ethernet)
@@ -81,40 +83,10 @@
   # ---------------------------------------------------------------------------
   # DESKTOP ENVIRONMENT & LOGIN SCREEN
   # ---------------------------------------------------------------------------
-  # SDDM is the "Login Screen" manager.
-  services.displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-  };
-  
   # PLASMA 6 (KDE): A backup desktop environment.
   # Useful if you break your Hyprland config and need a GUI to fix it.
   services.desktopManager.plasma6.enable = true;
   
-  # Set Hyprland as the default option selected at login
-  services.displayManager.defaultSession = "hyprland";
-
-  # ---------------------------------------------------------------------------
-  # HYPRLAND (THE ENGINE)
-  # ---------------------------------------------------------------------------
-  # This installs the Hyprland binary and sets up the Wayland session files.
-  # NOTE: Your personal Hyprland config (animations, keybinds) lives in HOME MANAGER,
-  # not here. This just allows the OS to run it.
-  programs.hyprland.enable = true;
-
-  # ---------------------------------------------------------------------------
-  # AUDIO (PIPEWIRE)
-  # ---------------------------------------------------------------------------
-  # Pipewire is the modern audio standard for Linux. 
-  services.pulseaudio.enable = false; # Disable old PulseAudio
-  security.rtkit.enable = true;       # Security for real-time audio
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
   # ---------------------------------------------------------------------------
   # PRINTERS
   # ---------------------------------------------------------------------------
