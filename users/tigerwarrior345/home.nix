@@ -34,6 +34,11 @@
   
   xdg.configFile."hypr/hyprland.conf".source = ./hypr/hyprland.conf;
 
+  xdg.configFile."hypr/hyprpaper.conf".source = ./hypr/hyprpaper.conf;
+
+  xdg.configFile."waybar/config".source = ./waybar/config.jsonc;
+  xdg.configFile."waybar/style.css".source = ./waybar/style.css;
+
   # If you have a separate waybar config in this folder, uncomment this:
   # xdg.configFile."waybar/config".source = ./waybar-config;
   # xdg.configFile."waybar/style.css".source = ./waybar-style.css;
@@ -53,6 +58,7 @@
       # Quick edit shortcuts
       conf = "nvim ~/.dotfiles/system/configuration.nix";
       home = "nvim ~/.dotfiles/users/tigerwarrior345/home.nix";
+      hypr = "nvim ~/.dotfiles/users/tigerwarrior345/hypr/hyprland.conf";
     };
   };
 
@@ -69,36 +75,49 @@
   # ---------------------------------------------------------------------------
   # PACKAGES (The "Furniture")
   # ---------------------------------------------------------------------------
-  home.packages = with pkgs; [
-    # --- TERMINAL & TOOLS ---
-    ghostty
-    fastfetch
-    git
-    git-crypt
-    gnupg
-    pinentry-qt
-    ripgrep    # Much faster version of grep
-    btop       # Cool looking task manager
+home.packages = with pkgs; [
+    # --- HYPRLAND CORE ---
+    waybar                  # The Status Bar
+    rofi	            # App Launcher (The menu)
+    mako                    # Notification bubbles
+    libnotify               # Required for notifications to work
+    hyprpaper               # Wallpaper handling
+    networkmanagerapplet    # Wifi GUI in the bar
 
-    # --- HYPRLAND ECOSYSTEM ---
-    waybar                  # Status bar
-    mako                    # Notification daemon
-    libnotify               # Required for mako to work
-    networkmanagerapplet    # Wifi GUI in tray
-    hyprpaper               # Wallpaper daemon
-    blueman                 # Bluetooth GUI
-    rofi	            # App launcher (Wayland version)
-    wl-clipboard            # Copy/Paste support
+    # --- ESSENTIAL UTILITIES ---
+    ghostty                 # Terminal
+    kdePackages.dolphin     # File Manager
+    kdePackages.ark
+    kdePackages.kio-extras
+    pavucontrol             # Volume Control GUI (Vital)
     
-    # --- KDE / GUI APPS ---
-    kdePackages.sddm-kcm        # Settings for Login screen
-    kdePackages.kcalc           # Calculator
-    kdePackages.partitionmanager # Disk Manager
-    kdePackages.dolphin         # File Manager (Optional, good to have)
+    # --- WORKFLOW ---
+    grim                    # Screenshot tool
+    slurp                   # Select area for screenshot
+    wl-clipboard            # Copy/Paste functionality
+    cliphist
     
-    # --- FONTS (Optional) ---
-    # If icons in Waybar look weird, you usually need a Nerd Font
-    nerd-fonts.jetbrains-mono
+    # --- BASIC CLI TOOLS ---
+    git
+    unzip                   # Open .zip files
+    wget                    # Download files
+    fastfetch               # System info (You wanted this)
+    btop
+    zip
+    p7zip
+    ripgrep
+    fd
+    bat
+    fzf
+
+    # --- HARDWARE CONTROLS ---
+    brightnessctl
+    playerctl
+    blueman
+
+    # --- FONTS ---
+    # Required for icons in the bar/launcher to show up
+    nerd-fonts.jetbrains-mono 
   ];
 
   # ---------------------------------------------------------------------------

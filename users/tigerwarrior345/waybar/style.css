@@ -1,0 +1,44 @@
+* {
+    font-family: "JetBrainsMono Nerd Font", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+window#waybar {
+    background-color: rgba(30, 30, 30, 0.95);
+    color: #ffffff;
+    border-top: 2px solid #3daee9; /* KDE Blue */
+}
+
+#custom-launcher {
+    font-size: 18px;
+    color: #3daee9;
+    padding-left: 10px;
+    padding-right: 15px;
+    margin-right: 10px;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: #ffffff;
+}
+
+#workspaces button.active {
+    background-color: #4c566a;
+    border-bottom: 3px solid #3daee9;
+}
+
+#clock,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray {
+    padding: 0 10px;
+    margin: 0 4px;
+    color: #ffffff;
+}
+
+#pulseaudio { color: #a3be8c; }
+#network { color: #b48ead; }
+#clock { font-weight: bold; }
