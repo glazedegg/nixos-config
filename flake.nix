@@ -8,14 +8,9 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     hyprland.url = "github:hyprwm/Hyprland";
-
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, ghostty, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, ... }:
   let
     system = "x86_64-linux";
 
@@ -24,9 +19,6 @@
       config = { allowUnfree = true; };
       
       overlays = [
-        (final: prev: {
-	  ghostty = ghostty.packages.${system}.default;
-	})
       ];
     };
   in {
