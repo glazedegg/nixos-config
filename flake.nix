@@ -1,5 +1,5 @@
 # =============================================================================
-#  FLAKE CONFIGURATION (The "Architect")
+#  FLAKE CONFIGURATION
 # =============================================================================
 #
 #  WHO IS THIS FILE FOR?
@@ -32,12 +32,12 @@
       config = { allowUnfree = true; };
     };
   in {
-    # -------------------------------------------------------------------------
+
     # USER CONFIGURATIONS
-    # -------------------------------------------------------------------------
     homeConfigurations = {
+
       # Name this "username@hostname".
-      # When you run 'homeup' on your laptop, it looks for exactly this string.
+      # When you run 'homeup' this is what it looks for.
       "tigerwarrior345@laptop" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [
@@ -46,15 +46,13 @@
         ];
       };
       
-      # If you get a desktop later, you just add:
+      # To add a new user or host do something like:
       # "tigerwarrior345@desktop" = ...
     };
 
-    # -------------------------------------------------------------------------
     # SYSTEM CONFIGURATIONS
-    # -------------------------------------------------------------------------
     nixosConfigurations = {
-      # Name this "laptop".
+
       # When you run 'sysup', it checks your hostname ('laptop') and picks this.
       laptop = nixpkgs.lib.nixosSystem {
         inherit system;
@@ -63,7 +61,7 @@
           ./hosts/laptop/configuration.nix
         ];
       };
-      # If you get a desktop later, you just add:
+      # To add a new host do something like:
       # desktop = ...
     };
   };
